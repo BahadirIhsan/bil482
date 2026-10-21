@@ -1,0 +1,16 @@
+# Faz 1: yalnızca yerel PostgreSQL. api ve web servisleri Faz 4'te eklenir (T-16.1).
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: industryapp
+      POSTGRES_USER: industryapp
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-localdev}
+    ports: ["${DB_PORT:-5432}:5432"]   # yerelde 5432 doluysa .env içinde DB_PORT=5433 verilir
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U industryapp"]
+      interval: 10s
+volumes:
+  pgdata:

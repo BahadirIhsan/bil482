@@ -1,6 +1,7 @@
 using IndustryApp.Application.Abstractions;
 using IndustryApp.Application.Abstractions.Repositories;
 using IndustryApp.Infrastructure.Events;
+using IndustryApp.Infrastructure.Identity;
 using IndustryApp.Infrastructure.Persistence;
 using IndustryApp.Infrastructure.Persistence.Repositories;
 using IndustryApp.Infrastructure.Time;
@@ -15,8 +16,8 @@ public static class DependencyInjection
     public const string ConnectionStringName = "Default";
 
     /// <summary>
-    /// Kalıcılık, repository'ler, UnitOfWork ve olay altyapısı. Identity, dosya depolama, görsel işleme ve
-    /// bildirim kanalları ilgili fazlarda buraya eklenir (T-13.6).
+    /// Kalıcılık, repository'ler, UnitOfWork, olay altyapısı ve kimlik (Identity, JWT, CurrentUser).
+    /// Dosya depolama, görsel işleme ve bildirim kanalları ilgili fazlarda buraya eklenir (T-13.6).
     /// </summary>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
@@ -41,6 +42,27 @@ public static class DependencyInjection
         services.AddScoped<IOfferRepository, OfferRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddScoped<IUserConsentRepository, UserConsentRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+
+        // Kimlik (UC-01, K-11): Identity çekirdeği yalnızca IdentityService içinden kullanılır.
+        services.AddIdentityCore<ApplicationUser>(o =>
+            {
+                o.Password.RequiredLength = 8;
+                o.Password.RequireDigit = true;
+                o.Password.RequireNonAlphanumeric = false;
+                o.Password.RequireUppercase = false;
+                o.Password.RequireLowercase = false;
+                o.Lockout.MaxFailedAccessAttempts = 5;
+                o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+                o.Lockout.AllowedForNewUsers = true;
+                o.User.RequireUniqueEmail = true;
+            })
+            .AddRoles<ApplicationRole>()
+            .AddEntityFrameworkStores<AppDbContext>();
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUser, CurrentUser>();
+        services.AddScoped<IIdentityService, IdentityService>();
+        services.AddSingleton<ITokenService, JwtTokenService>();
 
         // Singleton'lar DI ile tek örnek; statik Instance alanı yok (PAT-X.2).
         services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();

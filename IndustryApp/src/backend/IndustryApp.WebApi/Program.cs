@@ -1,9 +1,12 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using IndustryApp.Application;
+using IndustryApp.Application.Abstractions;
 using IndustryApp.Infrastructure;
 using IndustryApp.WebApi.Extensions;
+using IndustryApp.WebApi.Filters;
 using IndustryApp.WebApi.Middleware;
+using IndustryApp.WebApi.Realtime;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateBootstrapLogger();
@@ -21,13 +24,21 @@ try
     builder.Services.AddAppOptions(builder.Configuration);
     builder.Services.AddApplication();
     builder.Services.AddInfrastructure(builder.Configuration);
+    builder.Services.AddApiAuthentication(builder.Configuration);
+    builder.Services.AddApiRateLimiting(builder.Configuration);
 
-    // REST ve (Faz 2'de) SignalR yanıtları camelCase'e sabitlenir; enum'lar metin olarak döner.
-    builder.Services.AddControllers().AddJsonOptions(options =>
+    // REST ve SignalR yanıtları camelCase'e sabitlenir; enum'lar metin olarak döner (T-14.5).
+    builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>()).AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+    builder.Services.AddSignalR().AddJsonProtocol(options =>
+    {
+        options.PayloadSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+    builder.Services.AddSingleton<IRealtimePublisher, SignalRRealtimePublisher>();
     builder.Services.AddApiProblemDetails();
     builder.Services.AddApiSwagger();
     builder.Services.AddHealthChecks()
@@ -46,8 +57,11 @@ try
         app.UseSwaggerUI();
     }
 
+    app.UseAuthentication();
+    app.UseRateLimiter();
     app.UseAuthorization();
     app.MapControllers();
+    app.MapHub<NotificationHub>(NotificationHub.Path);
     app.MapHealthChecks("/health");
 
     app.Run();

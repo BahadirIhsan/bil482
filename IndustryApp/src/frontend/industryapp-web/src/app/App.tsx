@@ -1,18 +1,35 @@
-import { Container, CssBaseline, Typography } from '@mui/material'
+import { CssBaseline, ThemeProvider } from '@mui/material'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { RouterProvider } from 'react-router-dom'
+import { AuthProvider } from '../shared/auth'
+import { isApiError } from '../shared/errors'
+import { RealtimeProvider } from '../shared/realtime'
+import { router } from './router'
+import { theme } from './theme'
 
-// Faz 1 iskeleti: provider'lar (QueryClient, Theme, Auth, Realtime) ve router Faz 2'de eklenir.
+// 4xx yanıtlar tekrar denenmez (403/404/409 tekrar denemeyle düzelmez); ağ ve 5xx hataları bir kez denenir.
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30_000,
+      refetchOnWindowFocus: false,
+      retry: (failureCount, error) => !(isApiError(error) && error.status >= 400 && error.status < 500) && failureCount < 1,
+    },
+  },
+})
+
+/** Sağlayıcı sırası: Query → Theme → Auth (Query'yi temizler) → Realtime (Auth'a bağlı) → Router. */
 export default function App() {
   return (
-    <>
-      <CssBaseline />
-      <Container maxWidth="sm" sx={{ py: 8 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          IndustryApp
-        </Typography>
-        <Typography color="text.secondary">
-          Kaza sonrası onarım teklif platformu · Faz 1 iskeleti
-        </Typography>
-      </Container>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <AuthProvider>
+          <RealtimeProvider>
+            <RouterProvider router={router} />
+          </RealtimeProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   )
 }

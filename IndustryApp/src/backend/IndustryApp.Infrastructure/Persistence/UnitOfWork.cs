@@ -42,4 +42,15 @@ public sealed class UnitOfWork(AppDbContext db, IEventDispatcher dispatcher) : I
 
         return affected;
     }
+
+    public async Task<IUnitOfWorkTransaction> BeginTransactionAsync(CancellationToken ct) =>
+        new Transaction(await db.Database.BeginTransactionAsync(ct));
+
+    private sealed class Transaction(Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction inner) : IUnitOfWorkTransaction
+    {
+        public Task CommitAsync(CancellationToken ct) => inner.CommitAsync(ct);
+
+        // Commit edilmemiş transaction Dispose'da geri alınır.
+        public ValueTask DisposeAsync() => inner.DisposeAsync();
+    }
 }

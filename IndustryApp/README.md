@@ -9,7 +9,7 @@ IndustryApp, kaza geçirmiş araç sahiplerini sanayi ustalarıyla buluşturan b
 - Use case'ler: UC-01 rol bazlı kayıt ve giriş, UC-02 kaza raporu, UC-03 iş bildirimi ve teklif, UC-04 teklif seçimi ve iletişim; destekleyici akış YA-01 usta onayı ve katalog
 - Dokümanlar: `docs/PA1` (Project Definition, Project Plan, SRS, Architecture Overview, Pattern–Use Case Mapping)
 
-Durum: **Faz 1 – Temel altyapı** (`v0.1`). Repo, 6 projelik solution, domain modeli ve desen iskeletleri, veritabanı şeması ve referans veri, olay altyapısı, Swagger ve `/health` içeren boş API hazır. Henüz hiçbir use case uçtan uca çalışmıyor.
+Durum: **Faz 2 – Kimlik ve UC-04** (`v0.2`). Kullanıcılar ekrandan kaydolup giriş yapar (UC-01, Factory Method). UC-04 uçtan uca çalışır: müşteri teklifleri sıralar (Strategy), birini seçer (Command + State), seçimi 10 dakika içinde geri alır, eşleşme ekranında karşı tarafın iletişim bilgisini görür (Proxy); ustalar uygulama içi ve anlık (SignalR) bildirim alır. Rapor oluşturma (UC-02) ve teklif verme (UC-03) `v0.3`'te gelir; o zamana kadar rapor ve teklifler yerel test verisi betiğiyle eklenir. Tasarım: `docs/PA2/SoftwareDesignDocument.pdf`.
 
 ## Gereksinimler
 
@@ -39,7 +39,7 @@ docker compose up -d db
 ```bash
 cd src/backend/IndustryApp.WebApi
 dotnet user-secrets set "ConnectionStrings:Default" "Host=localhost;Port=5432;Database=industryapp;Username=industryapp;Password=localdev"
-dotnet user-secrets set "Jwt:SigningKey" "$(openssl rand -base64 64)"
+dotnet user-secrets set "Jwt:SigningKey" "$(openssl rand -base64 64 | tr -d '\n')"
 cd ../../..
 ```
 
@@ -75,6 +75,17 @@ cd src/frontend/industryapp-web
 npm install
 npm run dev         # http://localhost:5173
 ```
+
+**6. UC-04'ü deneme (yerel test verisi).** API ve frontend açıkken:
+
+1. http://localhost:5173/register üzerinden bir müşteri (`musteri@test.local`) ve üç usta (`usta1@test.local`, `usta2@test.local`, `usta3@test.local`) kaydedin. Geliştirme ortamında kayıt/giriş sınırı dakikada 30'dur (`appsettings.Development.json`); üretimde 3/5.
+2. Betiği çalıştırın; ustaları onaylar, bir Open rapor ve her ustadan bir Pending teklif ekler, rapor numarasını yazar:
+
+```bash
+docker compose exec -T db psql -U industryapp -d industryapp < database/dev/uc04-dev-data.sql
+```
+
+3. Ustalar çıkış yapıp tekrar girer (token'a `mechanic_status = Approved` yazılır). Müşteri panelinde rapor numarasını girip rapor detayını açar, teklifleri sıralar, birini seçer; ustaların bildirim zili anlık güncellenir. "Vazgeç" ile 10 dakika içinde geri alınır, "Eşleşmeye git" iletişim bilgisini gösterir. Betik her çalıştırmada yeni rapor açar.
 
 **Migration ekleme.** Şema değişikliği önce teknik tasarım dokümanında güncellenir, sonra koda geçer.
 

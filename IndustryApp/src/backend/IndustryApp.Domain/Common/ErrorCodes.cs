@@ -12,6 +12,7 @@ public static class ErrorCodes
     public const string ConcurrencyConflict = "CONCURRENCY_CONFLICT";
     public const string Unexpected = "UNEXPECTED_ERROR";
     public const string UnknownRole = "UNKNOWN_ROLE";
+    public const string TooManyRequests = "TOO_MANY_REQUESTS";
 
     // Hesaplar (UC-01, YA-01)
     public const string InvalidCredentials = "INVALID_CREDENTIALS";
@@ -24,6 +25,8 @@ public static class ErrorCodes
     public const string MechanicSpecialtyRequired = "MECHANIC_SPECIALTY_REQUIRED";
     public const string RejectionReasonRequired = "REJECTION_REASON_REQUIRED";
     public const string InvalidLocation = "INVALID_LOCATION";
+    public const string InvalidSpecialty = "INVALID_SPECIALTY";
+    public const string AccountLocked = "ACCOUNT_LOCKED";
 
     // Katalog
     public const string CategoryMaxDepth = "CATEGORY_MAX_DEPTH";
@@ -52,4 +55,7 @@ public static class ErrorCodes
     public const string UndoWindowExpired = "UNDO_WINDOW_EXPIRED";
     public const string NoActiveSelection = "NO_ACTIVE_SELECTION";
     public const string ContactNotFound = "CONTACT_NOT_FOUND";
+
+    // Bildirimler
+    public const string NotificationNotFound = "NOTIFICATION_NOT_FOUND";
 }

@@ -14,6 +14,8 @@ public static class Errors
         public static readonly Error EmailAlreadyUsed = Error.BusinessRule(ErrorCodes.EmailAlreadyUsed, "Bu e-posta adresi zaten kayıtlı.");
         public static readonly Error TaxNumberAlreadyUsed = Error.BusinessRule(ErrorCodes.TaxNumberAlreadyUsed, "Bu vergi numarası zaten kayıtlı.");
         public static readonly Error MechanicNotApproved = Error.Forbidden(ErrorCodes.MechanicNotApproved, "Hesabınız henüz onaylanmadı.");
+        public static readonly Error InvalidSpecialty = Error.Validation(ErrorCodes.InvalidSpecialty, "Uzmanlıklar geçerli ana hasar kategorilerinden seçilmelidir.");
+        public static readonly Error AccountLocked = Error.Unauthorized(ErrorCodes.AccountLocked, "Çok fazla hatalı deneme yapıldı. Lütfen 15 dakika sonra tekrar deneyin.");
     }
 
     public static class Reports
@@ -42,5 +44,10 @@ public static class Errors
     public static class Contacts
     {
         public static readonly Error NotFound = Error.NotFound(ErrorCodes.ContactNotFound, "İletişim bilgisi bulunamadı.");
+    }
+
+    public static class Notifications
+    {
+        public static readonly Error NotFound = Error.NotFound(ErrorCodes.NotificationNotFound, "Bildirim bulunamadı.");
     }
 }

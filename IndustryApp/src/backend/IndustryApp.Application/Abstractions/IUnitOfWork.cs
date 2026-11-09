@@ -10,4 +10,17 @@ public interface IUnitOfWork
 {
     /// <summary>Kaydeder; başarılıysa biriken domain olaylarını IEventDispatcher'a iletir.</summary>
     Task<int> SaveChangesAsync(CancellationToken ct);
+
+    /// <summary>
+    /// Birden çok SaveChanges'i tek veritabanı transaction'ında toplar. Kayıtta Identity kullanıcıyı kendi
+    /// SaveChanges'iyle yazar; profil adımı başarısız olursa kullanıcı da geri alınsın diye kullanılır.
+    /// CommitAsync çağrılmadan Dispose edilirse geri alınır.
+    /// </summary>
+    Task<IUnitOfWorkTransaction> BeginTransactionAsync(CancellationToken ct);
+}
+
+/// <summary>Açık transaction. CommitAsync çağrılmadan bırakılırsa geri alınır.</summary>
+public interface IUnitOfWorkTransaction : IAsyncDisposable
+{
+    Task CommitAsync(CancellationToken ct);
 }

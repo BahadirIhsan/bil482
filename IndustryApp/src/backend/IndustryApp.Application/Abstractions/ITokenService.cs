@@ -7,6 +7,9 @@ public interface ITokenService
 
     /// <summary>Düz token (kullanıcıya) + SHA-256 özeti (veritabanına).</summary>
     IRefreshTokenPair CreateRefreshToken();
+
+    /// <summary>İstemciden gelen düz refresh token'ın veritabanında aranacak özeti.</summary>
+    string HashRefreshToken(string refreshToken);
 }
 
 public interface IAccessToken

@@ -50,4 +50,6 @@ public static class ErrorCodes
     // Seçim ve iletişim (UC-04)
     public const string OfferNotAvailable = "OFFER_NOT_AVAILABLE";
     public const string UndoWindowExpired = "UNDO_WINDOW_EXPIRED";
+    public const string NoActiveSelection = "NO_ACTIVE_SELECTION";
+    public const string ContactNotFound = "CONTACT_NOT_FOUND";
 }

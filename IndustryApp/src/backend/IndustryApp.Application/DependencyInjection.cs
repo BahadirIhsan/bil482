@@ -1,5 +1,9 @@
 using FluentValidation;
 using IndustryApp.Application.Abstractions;
+using IndustryApp.Application.Contacts;
+using IndustryApp.Application.Offers.Commands;
+using IndustryApp.Application.Reports;
+using IndustryApp.Application.Selection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace IndustryApp.Application;
@@ -13,6 +17,12 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddValidatorsFromAssemblyContaining<IUnitOfWork>(includeInternalTypes: true);
+
+        // UC-04: seçim (Command + State), iletişim (Proxy), rapor detayı / tamamlama / iptal.
+        services.AddScoped<IReportCommandFactory, ReportCommandFactory>();
+        services.AddScoped<IOfferSelectionService, OfferSelectionService>();
+        services.AddScoped<IContactService, ContactService>();
+        services.AddScoped<IReportService, ReportService>();
 
         // Tüm IEventHandler<T> implementasyonları; yeni handler kayıt unutulmadan devreye girer.
         services.Scan(scan => scan

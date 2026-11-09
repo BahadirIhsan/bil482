@@ -30,5 +30,17 @@ public static class Errors
         public static readonly Error AlreadyExists = Error.Conflict(ErrorCodes.OfferAlreadyExists, "Bu rapora zaten teklif verdiniz.");
         public static readonly Error NotAvailable = Error.Conflict(ErrorCodes.OfferNotAvailable, "Teklif seçilebilir durumda değil.");
         public static readonly Error UndoWindowExpired = Error.Conflict(ErrorCodes.UndoWindowExpired, "Seçimi geri alma süresi doldu.");
+        public static readonly Error OfferIdRequired = Error.Validation(ErrorCodes.ValidationFailed, "Seçilecek teklif belirtilmelidir.");
+    }
+
+    public static class Selection
+    {
+        public static readonly Error NothingToUndo = Error.Conflict(ErrorCodes.ReportInvalidState, "Raporda geri alınabilecek bir seçim yok.");
+        public static readonly Error NoActiveSelection = Error.Conflict(ErrorCodes.NoActiveSelection, "Bu raporda henüz bir teklif seçilmedi.");
+    }
+
+    public static class Contacts
+    {
+        public static readonly Error NotFound = Error.NotFound(ErrorCodes.ContactNotFound, "İletişim bilgisi bulunamadı.");
     }
 }

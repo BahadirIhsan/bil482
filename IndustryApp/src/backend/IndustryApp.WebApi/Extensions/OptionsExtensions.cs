@@ -14,6 +14,7 @@ public static class OptionsExtensions
         services.AddValidated<OffersOptions>(configuration, OffersOptions.SectionName);
         services.AddValidated<MatchingOptions>(configuration, MatchingOptions.SectionName);
         services.AddValidated<PhotosOptions>(configuration, PhotosOptions.SectionName);
+        services.AddValidated<CatalogOptions>(configuration, CatalogOptions.SectionName);
         services.AddValidated<StorageOptions>(configuration, StorageOptions.SectionName);
         services.AddValidated<EmailOptions>(configuration, EmailOptions.SectionName);
         services.AddValidated<ResilienceOptions>(configuration, ResilienceOptions.SectionName);

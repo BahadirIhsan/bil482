@@ -10,15 +10,17 @@ import { RegisterMechanicView } from '../modules/auth/views/RegisterMechanicView
 import { RegisterRoleSelectView } from '../modules/auth/views/RegisterRoleSelectView'
 import { MatchView } from '../modules/contacts/views/MatchView'
 import { NotificationsView } from '../modules/notifications/views/NotificationsView'
+import { CreateReportWizardView } from '../modules/reports/views/CreateReportWizardView'
 import { CustomerReportDetailView } from '../modules/reports/views/CustomerReportDetailView'
+import { MyReportsView } from '../modules/reports/views/MyReportsView'
 import { ErrorView } from '../modules/system/views/ErrorView'
 import { AdminLayout, CustomerLayout, MechanicLayout, RoleLayout } from './layouts/roleLayouts'
 import { PublicLayout } from './layouts/PublicLayout'
 import { HomeRedirect } from './HomeRedirect'
 
 /**
- * T-14.3 route'ları. v0.2'de 1–8 ve 12 numaralı view'lar ile rol yönlendirmesi aktiftir; diğerleri
- * hangi sürümde geleceğini söyleyen yer tutucudur.
+ * T-14.3 route'ları. 1–8, 10–12 numaralı view'lar ve rol yönlendirmesi aktiftir; diğerleri hangi sürümde
+ * geleceğini söyleyen yer tutucudur.
  */
 export const router = createBrowserRouter([
   { path: '/', element: <HomeRedirect /> },
@@ -52,8 +54,8 @@ export const router = createBrowserRouter([
     ),
     children: [
       { path: '/customer', element: <CustomerDashboardView /> },
-      { path: '/customer/reports', element: <ComingSoon title="Raporlarım" release="v0.3" /> },
-      { path: '/customer/reports/new', element: <ComingSoon title="Yeni kaza raporu" release="v0.3" /> },
+      { path: '/customer/reports', element: <MyReportsView /> },
+      { path: '/customer/reports/new', element: <CreateReportWizardView /> },
       { path: '/customer/reports/:reportId', element: <CustomerReportDetailView /> },
     ],
   },

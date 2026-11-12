@@ -1,14 +1,40 @@
 using IndustryApp.Application.Abstractions.Repositories;
 using IndustryApp.Application.Catalog.Contracts;
+using IndustryApp.Application.Common.Options;
 using IndustryApp.Domain.Accounts;
 using IndustryApp.Domain.Catalog;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 
 namespace IndustryApp.Application.Catalog;
 
-public sealed class CatalogService(IDamageCategoryRepository categories, ILegalDocumentRepository legalDocuments) : ICatalogService
+public sealed class CatalogService(
+    IDamageCategoryRepository categories,
+    IVehicleTypeRepository vehicleTypes,
+    ILegalDocumentRepository legalDocuments,
+    IMemoryCache cache,
+    IOptions<CatalogOptions> options) : ICatalogService
 {
+    private TimeSpan CacheDuration => TimeSpan.FromMinutes(options.Value.CacheMinutes);
+
     public async Task<IReadOnlyList<DamageCategoryNodeResponse>> GetDamageTreeAsync(CancellationToken ct) =>
-        (await categories.GetTreeAsync(includeInactive: false, ct)).Select(ToNode).ToList();
+        await cache.GetOrCreateAsync(CatalogCacheKeys.DamageTree, async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = CacheDuration;
+            IReadOnlyList<DamageCategoryNodeResponse> tree =
+                (await categories.GetTreeAsync(includeInactive: false, ct)).Select(ToNode).ToList();
+            return tree;
+        }) ?? [];
+
+    public async Task<IReadOnlyList<VehicleTypeResponse>> GetVehicleTypesAsync(CancellationToken ct) =>
+        await cache.GetOrCreateAsync(CatalogCacheKeys.VehicleTypes, async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = CacheDuration;
+            IReadOnlyList<VehicleTypeResponse> list = (await vehicleTypes.ListActiveAsync(ct))
+                .Select(v => new VehicleTypeResponse(v.Id, v.Code, v.Name))
+                .ToList();
+            return list;
+        }) ?? [];
 
     public async Task<IReadOnlyList<LegalDocumentResponse>> GetLegalDocumentsAsync(string? role, CancellationToken ct)
     {

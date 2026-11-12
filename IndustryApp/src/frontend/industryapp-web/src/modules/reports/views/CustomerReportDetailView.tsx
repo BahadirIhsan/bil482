@@ -10,6 +10,7 @@ import { ConfirmSelectDialog } from '../../selection/components/ConfirmSelectDia
 import { SelectionBanner } from '../../selection/components/SelectionBanner'
 import { useSelectionStatus, useSelectOffer, useUndoSelection } from '../../selection/controller/useSelection'
 import { errorText } from '../../selection/model/errorText'
+import { PhotoGallery } from '../components/PhotoGallery'
 import { ReportActionDialog, type ReportAction } from '../components/ReportActionDialog'
 import { useCancelReport, useCompleteReport, useCustomerReport } from '../controller/useCustomerReport'
 import { reportStatusLabels, severityLabels, type ReportStatus } from '../model/types'
@@ -133,6 +134,11 @@ export function CustomerReportDetailView() {
             ))}
           </Stack>
         )}
+        <Divider sx={{ my: 1.5 }} />
+        <Typography variant="subtitle2" gutterBottom>
+          Fotoğraflar
+        </Typography>
+        <PhotoGallery photoIds={data.photoIds} />
       </Paper>
 
       <Box>

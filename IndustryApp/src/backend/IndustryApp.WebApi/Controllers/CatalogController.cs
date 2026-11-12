@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IndustryApp.WebApi.Controllers;
 
-/// <summary>Anonim katalog okumaları; kayıt formları için (endpoint 11, 13). Araç türleri (12) UC-02 ile gelir.</summary>
+/// <summary>Anonim katalog okumaları (endpoint 11–13): kayıt formları ve rapor sihirbazı.</summary>
 [Route("api/catalog")]
 [AllowAnonymous]
 public sealed class CatalogController(ICatalogService catalog) : ApiControllerBase
@@ -15,6 +15,12 @@ public sealed class CatalogController(ICatalogService catalog) : ApiControllerBa
     [ProducesResponseType<IReadOnlyList<DamageCategoryNodeResponse>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> DamageCategories(CancellationToken ct) =>
         Ok(await catalog.GetDamageTreeAsync(ct));
+
+    /// <summary>12 · Aktif araç türleri (rapor sihirbazı, 3. adım).</summary>
+    [HttpGet("vehicle-types")]
+    [ProducesResponseType<IReadOnlyList<VehicleTypeResponse>>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> VehicleTypes(CancellationToken ct) =>
+        Ok(await catalog.GetVehicleTypesAsync(ct));
 
     /// <summary>13 · Rolün güncel sözleşmeleri (Customer veya Mechanic).</summary>
     [HttpGet("legal-documents")]

@@ -13,4 +13,12 @@ public sealed class ReportsOptions
 
     [Range(1, 100)]
     public int MaxOpenPerCustomer { get; init; }
+
+    /// <summary>ReportExpirationJob'un süresi dolan raporları arama aralığı.</summary>
+    [Range(5, 3600)]
+    public int ExpirationCheckSeconds { get; init; } = 60;
+
+    /// <summary>Bir turda işlenen en fazla rapor sayısı.</summary>
+    [Range(1, 1000)]
+    public int ExpirationBatchSize { get; init; } = 100;
 }

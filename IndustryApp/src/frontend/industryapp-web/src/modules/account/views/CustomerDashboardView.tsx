@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Alert, Button, Paper, Stack, TextField, Typography } from '@mui/material'
+import { Button, Paper, Stack, TextField, Typography } from '@mui/material'
 import { useAuth } from '../../../shared/auth'
 
 const GUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 /**
- * Müşteri paneli (route /customer, view #9). v0.2'de rapor listesi (UC-02) yoktur; yerel test verisi betiğinin
- * yazdığı rapor numarasıyla rapor detayı açılır. Panel özeti rol bazlı Abstract Factory ile v0.4'te gelir.
+ * Müşteri paneli (route /customer, view #9). Yeni rapor ve "Raporlarım" kısayolları (UC-02) ile rapor numarasıyla
+ * detay açma. Panel özeti rol bazlı Abstract Factory ile v1.0'da gelir.
  */
 export function CustomerDashboardView() {
   const { user } = useAuth()
@@ -20,10 +20,14 @@ export function CustomerDashboardView() {
       <Typography variant="h5" component="h1">
         Hoş geldiniz{user?.fullName ? `, ${user.fullName}` : ''}
       </Typography>
-      <Alert severity="info">
-        Rapor oluşturma ve "Raporlarım" listesi v0.3 sürümünde eklenecek. Şimdilik rapor numarasıyla rapor detayını
-        açabilirsiniz.
-      </Alert>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
+        <Button variant="contained" onClick={() => navigate('/customer/reports/new')}>
+          Yeni kaza raporu
+        </Button>
+        <Button variant="outlined" onClick={() => navigate('/customer/reports')}>
+          Raporlarım
+        </Button>
+      </Stack>
       <Paper
         variant="outlined"
         component="form"

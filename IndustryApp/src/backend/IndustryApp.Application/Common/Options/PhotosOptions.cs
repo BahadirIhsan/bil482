@@ -21,4 +21,12 @@ public sealed class PhotosOptions
 
     [MinLength(1)]
     public string[] AllowedContentTypes { get; init; } = [];
+
+    /// <summary>Rapora bağlanmayan geçici fotoğraf bu süreden sonra silinir (TemporaryUploadCleanupJob).</summary>
+    [Range(1, 24 * 30)]
+    public int TemporaryRetentionHours { get; init; } = 24;
+
+    /// <summary>Geçici fotoğraf temizliğinin çalışma aralığı.</summary>
+    [Range(1, 24 * 60)]
+    public int CleanupIntervalMinutes { get; init; } = 60;
 }

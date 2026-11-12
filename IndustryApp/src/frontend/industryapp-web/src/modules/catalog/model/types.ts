@@ -1,4 +1,4 @@
-// Katalog (GET /api/catalog/damage-categories, /legal-documents — endpoint 11, 13).
+// Katalog (GET /api/catalog/damage-categories, /vehicle-types, /legal-documents — endpoint 11, 12, 13).
 
 export interface DamageCategoryNode {
   id: number
@@ -6,6 +6,12 @@ export interface DamageCategoryNode {
   name: string
   level: number
   children: DamageCategoryNode[]
+}
+
+export interface VehicleType {
+  id: number
+  code: string
+  name: string
 }
 
 export interface LegalDocument {
@@ -20,5 +26,6 @@ export type ConsentRole = 'Customer' | 'Mechanic'
 
 export const catalogKeys = {
   damageCategories: ['catalog', 'damage-categories'] as const,
+  vehicleTypes: ['catalog', 'vehicle-types'] as const,
   legalDocuments: (role: ConsentRole) => ['catalog', 'legal-documents', role] as const,
 }

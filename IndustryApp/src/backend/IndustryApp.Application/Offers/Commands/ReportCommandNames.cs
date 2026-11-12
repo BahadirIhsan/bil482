@@ -7,4 +7,6 @@ public static class ReportCommandNames
     public const string UndoSelectOffer = "UndoSelectOffer";
     public const string CompleteReport = "CompleteReport";
     public const string CancelReport = "CancelReport";
+    public const string CreateReport = "CreateReport";
+    public const string ExpireReport = "ExpireReport";
 }

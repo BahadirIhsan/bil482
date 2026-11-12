@@ -1,4 +1,5 @@
 using FluentAssertions;
+using IndustryApp.Application.Abstractions;
 using IndustryApp.Application.Abstractions.Repositories;
 using IndustryApp.Application.Common.Options;
 using IndustryApp.Application.Offers.Commands;
@@ -7,6 +8,7 @@ using IndustryApp.Domain.Common;
 using IndustryApp.Domain.Offers;
 using IndustryApp.Domain.Reports;
 using IndustryApp.UnitTests.Domain;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 
@@ -25,10 +27,14 @@ public sealed class ReportServiceTests
             _ctx.History,
             Substitute.For<IVehicleTypeRepository>(),
             Substitute.For<IDamageCategoryRepository>(),
+            Substitute.For<IFileStorage>(),
+            Substitute.For<IImageInfoReader>(),
             _ctx.UnitOfWork,
             _ctx.CurrentUser,
             _ctx.Clock,
-            Options.Create(new OffersOptions { SelectionUndoWindowMinutes = 10 }));
+            Options.Create(new OffersOptions { SelectionUndoWindowMinutes = 10 }),
+            Options.Create(new ReportsOptions { ExpireAfterHours = 72, MaxOpenPerCustomer = 3 }),
+            NullLogger<ReportService>.Instance);
     }
 
     [Fact]

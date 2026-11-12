@@ -23,6 +23,18 @@ public static class Errors
         public static readonly Error NotFound = Error.NotFound(ErrorCodes.ReportNotFound, "Rapor bulunamadı.");
         public static readonly Error NotOwner = Error.Forbidden(ErrorCodes.NotReportOwner, "Bu rapor size ait değil.");
         public static readonly Error OpenLimitReached = Error.BusinessRule(ErrorCodes.OpenReportLimitReached, "Açık rapor sınırına ulaştınız.");
+        public static readonly Error InvalidPhotoKey = Error.Validation(ErrorCodes.InvalidPhotoKey, "Fotoğraf bulunamadı veya size ait değil. Fotoğrafı yeniden yükleyin.");
+        public static readonly Error VehicleTypeInvalid = Error.Validation(ErrorCodes.ValidationFailed, "Geçerli bir araç türü seçin.");
+        public static readonly Error CategoryInactive = Error.Validation(ErrorCodes.CategoryInactive, "Seçilen hasar bölgelerinden biri artık kullanılmıyor.");
+    }
+
+    public static class Photos
+    {
+        public static readonly Error NotFound = Error.NotFound(ErrorCodes.PhotoNotFound, "Fotoğraf bulunamadı.");
+        public static readonly Error UnsupportedImage = Error.Validation(ErrorCodes.UnsupportedImage, "Yalnızca JPEG, PNG veya WebP fotoğraf yüklenebilir.");
+
+        public static Error FileTooLarge(int maxMb) =>
+            Error.Validation(ErrorCodes.FileTooLarge, $"Fotoğraf en fazla {maxMb} MB olabilir.");
     }
 
     public static class Offers

@@ -9,6 +9,8 @@ using IndustryApp.Application.Offers;
 using IndustryApp.Application.Offers.Commands;
 using IndustryApp.Application.Offers.Sorting;
 using IndustryApp.Application.Reports;
+using IndustryApp.Application.Reports.Expiration;
+using IndustryApp.Application.Reports.Photos;
 using IndustryApp.Application.Selection;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,6 +25,11 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddValidatorsFromAssemblyContaining<IUnitOfWork>(includeInternalTypes: true);
+
+        // UC-02: rapor oluşturma (Builder), fotoğraf yükleme ve süre dolumu; katalog önbelleği.
+        services.AddMemoryCache();
+        services.AddScoped<IPhotoService, PhotoService>();
+        services.AddScoped<IReportExpirationService, ReportExpirationService>();
 
         // UC-04: seçim (Command + State), iletişim (Proxy), rapor detayı / tamamlama / iptal.
         services.AddScoped<IReportCommandFactory, ReportCommandFactory>();

@@ -1,5 +1,6 @@
 using IndustryApp.Application.Common;
 using IndustryApp.Application.Reports.Contracts;
+using IndustryApp.Application.Reports.Photos;
 using IndustryApp.Domain.Reports;
 
 namespace IndustryApp.Application.Abstractions.Repositories;
@@ -20,6 +21,9 @@ public interface IAccidentReportRepository
     Task<PagedResult<ReportListItemResponse>> ListByCustomerAsync(Guid customerId, IPagedQuery paging, CancellationToken ct);
 
     Task<int> CountOpenByCustomerAsync(Guid customerId, CancellationToken ct);
+
+    /// <summary>Fotoğrafın anahtarı, rapor sahibi ve rapora eşleşmiş ustalar (endpoint 15 yetki kontrolü); yoksa null.</summary>
+    Task<PhotoAccessInfo?> GetPhotoAccessAsync(Guid photoId, CancellationToken ct);
 
     /// <summary>Süresi dolmuş Open raporlar, teklifleriyle birlikte, en eskiden başlayarak.</summary>
     Task<IReadOnlyList<AccidentReport>> ListExpiredOpenAsync(DateTimeOffset now, int batchSize, CancellationToken ct);

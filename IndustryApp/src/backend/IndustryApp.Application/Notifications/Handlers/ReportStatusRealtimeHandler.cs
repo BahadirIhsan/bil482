@@ -8,7 +8,7 @@ namespace IndustryApp.Application.Notifications.Handlers;
 public sealed record ReportStatusChangedPayload(Guid ReportId, string Status, Guid? SelectedOfferId);
 
 /// <summary>
-/// UC-04 · Seçim, geri alma, tamamlama ve iptalde rapor sahibine ve teklif vermiş ustalara report.statusChanged
+/// UC-04 · Seçim, geri alma, tamamlama, iptal ve süre dolumunda rapor sahibine ve teklif vermiş ustalara report.statusChanged
 /// gönderir; açık ekranlar sayfa yenilenmeden güncellenir (PR-04.1). Durum, commit edilmiş rapordan okunur;
 /// böylece olaylar sırasız işlense bile istemci en güncel durumu görür. Asıl kaynak her zaman REST'tir.
 /// </summary>
@@ -16,7 +16,8 @@ public sealed class ReportStatusRealtimeHandler(IAccidentReportRepository report
     : IEventHandler<OfferSelectedEvent>,
       IEventHandler<OfferSelectionUndoneEvent>,
       IEventHandler<ReportCompletedEvent>,
-      IEventHandler<ReportCancelledEvent>
+      IEventHandler<ReportCancelledEvent>,
+      IEventHandler<ReportExpiredEvent>
 {
     public Task HandleAsync(OfferSelectedEvent e, CancellationToken ct) => PublishAsync(e.ReportId, ct);
 
@@ -25,6 +26,8 @@ public sealed class ReportStatusRealtimeHandler(IAccidentReportRepository report
     public Task HandleAsync(ReportCompletedEvent e, CancellationToken ct) => PublishAsync(e.ReportId, ct);
 
     public Task HandleAsync(ReportCancelledEvent e, CancellationToken ct) => PublishAsync(e.ReportId, ct);
+
+    public Task HandleAsync(ReportExpiredEvent e, CancellationToken ct) => PublishAsync(e.ReportId, ct);
 
     private async Task PublishAsync(Guid reportId, CancellationToken ct)
     {

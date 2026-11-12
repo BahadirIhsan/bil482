@@ -27,6 +27,9 @@ public sealed class PostgresFixture : IAsyncLifetime
 
     public TestIdentityService Identity { get; } = new();
 
+    /// <summary>LocalFileStorage kökü; her test çalıştırması için ayrı geçici klasör.</summary>
+    public string StorageRoot { get; } = Path.Combine(Path.GetTempPath(), "industryapp-it", Guid.NewGuid().ToString("N"));
+
     public async Task InitializeAsync()
     {
         await _container.StartAsync();
@@ -35,13 +38,25 @@ public sealed class PostgresFixture : IAsyncLifetime
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["ConnectionStrings:Default"] = _container.GetConnectionString(),
-                ["Offers:SelectionUndoWindowMinutes"] = "10"
+                ["Offers:SelectionUndoWindowMinutes"] = "10",
+                ["Reports:ExpireAfterHours"] = "72",
+                ["Reports:MaxOpenPerCustomer"] = "3",
+                ["Photos:MaxCountPerReport"] = "8",
+                ["Photos:MaxFileSizeMb"] = "10",
+                ["Photos:MaxWidthPx"] = "1920",
+                ["Photos:JpegQuality"] = "80",
+                ["Storage:RootPath"] = StorageRoot,
+                ["Catalog:CacheMinutes"] = "10"
             })
             .Build();
 
         var services = new ServiceCollection();
         services.AddLogging();
         services.AddOptions<OffersOptions>().Bind(configuration.GetSection(OffersOptions.SectionName));
+        services.AddOptions<ReportsOptions>().Bind(configuration.GetSection(ReportsOptions.SectionName));
+        services.AddOptions<PhotosOptions>().Bind(configuration.GetSection(PhotosOptions.SectionName));
+        services.AddOptions<StorageOptions>().Bind(configuration.GetSection(StorageOptions.SectionName));
+        services.AddOptions<CatalogOptions>().Bind(configuration.GetSection(CatalogOptions.SectionName));
         services.AddApplication();
         services.AddInfrastructure(configuration);
         services.AddScoped<TestCurrentUser>();
@@ -59,6 +74,8 @@ public sealed class PostgresFixture : IAsyncLifetime
     {
         await Services.DisposeAsync();
         await _container.DisposeAsync();
+        if (Directory.Exists(StorageRoot))
+            Directory.Delete(StorageRoot, recursive: true);
     }
 
     /// <summary>Verilen kullanıcı adına çalışan yeni bir DI kapsamı (bir HTTP isteğinin karşılığı).</summary>

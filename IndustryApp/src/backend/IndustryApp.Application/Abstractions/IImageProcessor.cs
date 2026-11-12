@@ -1,6 +1,9 @@
 namespace IndustryApp.Application.Abstractions;
 
-/// <summary>Görsel işleme hattı (PAT-02.3): boyutlandırma, sıkıştırma, EXIF/GPS temizleme.</summary>
+/// <summary>
+/// Görsel işleme hattı (PAT-02.3): yükleme, boyutlandırma, sıkıştırma, EXIF/GPS temizleme. Okunamayan dosyada
+/// UnsupportedImageException fırlatır.
+/// </summary>
 public interface IImageProcessor
 {
     Task<IProcessedImage> ProcessAsync(IImageInput input, CancellationToken ct);
@@ -28,3 +31,13 @@ public interface IProcessedImage : IDisposable
 
     Task EncodeJpegAsync(Stream destination, CancellationToken ct);
 }
+
+/// <summary>Depodaki işlenmiş fotoğrafın piksel boyutunu okur (rapora yazılan meta veri için).</summary>
+public interface IImageInfoReader
+{
+    /// <summary>Görsel okunamazsa null.</summary>
+    Task<(int Width, int Height)?> ReadSizeAsync(Stream content, CancellationToken ct);
+}
+
+/// <summary>Dosya imzası geçerli görünse de içerik çözülemedi (bozuk veya desteklenmeyen görsel).</summary>
+public sealed class UnsupportedImageException(string message, Exception? inner = null) : Exception(message, inner);

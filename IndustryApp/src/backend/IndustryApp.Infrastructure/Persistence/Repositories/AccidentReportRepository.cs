@@ -1,6 +1,7 @@
 using IndustryApp.Application.Abstractions.Repositories;
 using IndustryApp.Application.Common;
 using IndustryApp.Application.Reports.Contracts;
+using IndustryApp.Application.Reports.Photos;
 using IndustryApp.Domain.Offers;
 using IndustryApp.Domain.Reports;
 using Microsoft.EntityFrameworkCore;
@@ -53,6 +54,18 @@ public sealed class AccidentReportRepository(AppDbContext db) : IAccidentReportR
 
     public Task<int> CountOpenByCustomerAsync(Guid customerId, CancellationToken ct) =>
         db.AccidentReports.CountAsync(r => r.CustomerId == customerId && r.Status == ReportStatus.Open, ct);
+
+    public async Task<PhotoAccessInfo?> GetPhotoAccessAsync(Guid photoId, CancellationToken ct)
+    {
+        var row = await (
+                from p in db.ReportPhotos.AsNoTracking()
+                join r in db.AccidentReports on p.ReportId equals r.Id
+                where p.Id == photoId
+                select new { p.Id, p.StorageKey, p.ContentType, p.ReportId, r.CustomerId, Mechanics = r.Matches.Select(m => m.MechanicId).ToList() })
+            .FirstOrDefaultAsync(ct);
+
+        return row is null ? null : new PhotoAccessInfo(row.Id, row.StorageKey, row.ContentType, row.ReportId, row.CustomerId, row.Mechanics);
+    }
 
     public async Task<IReadOnlyList<AccidentReport>> ListExpiredOpenAsync(DateTimeOffset now, int batchSize, CancellationToken ct) =>
         await db.AccidentReports

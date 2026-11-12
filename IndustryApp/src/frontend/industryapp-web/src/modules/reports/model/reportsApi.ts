@@ -1,8 +1,14 @@
 import { client } from '../../../shared/http/axiosClient'
-import type { ReportDetail } from './types'
+import type { CreateReportRequest, CreateReportResponse, PagedResult, ReportDetail, ReportListItem } from './types'
 
-// UC-04 · Müşterinin rapor uç noktaları (endpoint 18, 19, 20).
+// Müşterinin rapor uç noktaları: oluşturma ve liste (UC-02, endpoint 16, 17), detay, tamamlama, iptal (UC-04, 18–20).
 export const reportsApi = {
+  create: async (request: CreateReportRequest): Promise<CreateReportResponse> =>
+    (await client.post<CreateReportResponse>('/reports', request)).data,
+
+  listMine: async (page: number, pageSize = 10): Promise<PagedResult<ReportListItem>> =>
+    (await client.get<PagedResult<ReportListItem>>('/reports', { params: { page, pageSize } })).data,
+
   getForCustomer: async (reportId: string): Promise<ReportDetail> =>
     (await client.get<ReportDetail>(`/reports/${reportId}`)).data,
 

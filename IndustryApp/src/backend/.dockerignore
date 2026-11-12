@@ -1,0 +1,7 @@
+**/bin/
+**/obj/
+**/logs/
+**/.uploads/
+tests/
+*.user
+.vs/

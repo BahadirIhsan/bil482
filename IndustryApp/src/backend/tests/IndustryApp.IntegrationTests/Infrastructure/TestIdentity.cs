@@ -12,7 +12,10 @@ public sealed class TestCurrentUser : ICurrentUser
 
     public bool IsAuthenticated => UserId != Guid.Empty;
 
-    public bool IsInRole(string role) => true;
+    /// <summary>null ise her rol kabul edilir (UC-04 testleri); rol kontrolünü sınayan testler açıkça verir.</summary>
+    public IReadOnlyCollection<string>? Roles { get; set; }
+
+    public bool IsInRole(string role) => Roles is null || Roles.Contains(role);
 
     public string? IpAddress => "127.0.0.1";
 }

@@ -21,6 +21,16 @@ export const errorMessages: Record<string, string> = {
   MECHANIC_NOT_APPROVED: 'Hesabınız henüz onaylanmadı.',
   MECHANIC_SPECIALTY_REQUIRED: 'En az bir uzmanlık seçilmelidir.',
   INVALID_LOCATION: 'Konum koordinatları geçersiz.',
+  // Raporlar ve fotoğraflar (UC-02)
+  REPORT_INCOMPLETE: 'Rapor eksik: en az bir fotoğraf, hasar bölgesi, araç türü ve konum gereklidir.',
+  OPEN_REPORT_LIMIT_REACHED: 'Açık rapor sınırına ulaştınız. Yeni rapor için mevcut raporlardan birinin sonuçlanmasını bekleyin.',
+  CATEGORY_INACTIVE: 'Seçilen hasar bölgelerinden biri artık kullanılmıyor. Lütfen seçimi güncelleyin.',
+  CATEGORY_MAX_DEPTH: 'Hasar ağacı en fazla 3 seviyeli olabilir.',
+  DUPLICATE_DAMAGE_ITEM: 'Aynı hasar bölgesi iki kez seçilemez.',
+  FILE_TOO_LARGE: 'Fotoğraf en fazla 10 MB olabilir.',
+  UNSUPPORTED_IMAGE: 'Yalnızca JPEG, PNG veya WebP fotoğraf yüklenebilir.',
+  INVALID_PHOTO_KEY: 'Fotoğraflardan biri bulunamadı. Fotoğrafı kaldırıp yeniden yükleyin.',
+  PHOTO_NOT_FOUND: 'Fotoğraf bulunamadı.',
   // Raporlar ve teklifler
   REPORT_NOT_FOUND: 'Rapor bulunamadı.',
   REPORT_INVALID_STATE: 'Rapor bu işlem için uygun durumda değil.',

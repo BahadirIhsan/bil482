@@ -40,6 +40,12 @@ public static class ErrorCodes
     public const string OpenReportLimitReached = "OPEN_REPORT_LIMIT_REACHED";
     public const string DuplicateDamageItem = "DUPLICATE_DAMAGE_ITEM";
 
+    // Fotoğraflar (UC-02)
+    public const string FileTooLarge = "FILE_TOO_LARGE";
+    public const string UnsupportedImage = "UNSUPPORTED_IMAGE";
+    public const string InvalidPhotoKey = "INVALID_PHOTO_KEY";
+    public const string PhotoNotFound = "PHOTO_NOT_FOUND";
+
     // Eşleştirme ve teklifler (UC-03)
     public const string NotMatched = "NOT_MATCHED";
     public const string OfferNotFound = "OFFER_NOT_FOUND";

@@ -1,4 +1,9 @@
-# Faz 1: yalnızca yerel PostgreSQL. api ve web servisleri Faz 4'te eklenir (T-16.1).
+# IndustryApp (SDD 15). Üç konteyner: db (PostgreSQL 16), api (.NET 8), web (Caddy + SPA).
+#
+# Yerel geliştirme: yalnızca `docker compose up -d db` (API ve frontend makinede çalışır, README).
+# Üretim: .env doldurulur (deploy/.env.example), sonra `docker compose up -d --build` (adımlar SDD 15.3).
+#
+# db portu yalnızca 127.0.0.1'e açılır; sunucunun dışından erişilemez. Dışarıya yalnızca web (80, 443) açıktır.
 services:
   db:
     image: postgres:16-alpine
@@ -7,10 +12,41 @@ services:
       POSTGRES_DB: industryapp
       POSTGRES_USER: industryapp
       POSTGRES_PASSWORD: ${DB_PASSWORD:-localdev}
-    ports: ["${DB_PORT:-5432}:5432"]   # yerelde 5432 doluysa .env içinde DB_PORT=5433 verilir
+    ports: ["127.0.0.1:${DB_PORT:-5432}:5432"]   # yerelde 5432 doluysa .env içinde DB_PORT=5433 verilir
     volumes: [pgdata:/var/lib/postgresql/data]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U industryapp"]
       interval: 10s
+
+  api:
+    build: ./src/backend
+    image: industryapp-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__Default: "Host=db;Database=industryapp;Username=industryapp;Password=${DB_PASSWORD:-localdev}"
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:-}
+      Email__Host: ${SMTP_HOST:-}
+      Email__User: ${SMTP_USER:-}
+      Email__Password: ${SMTP_PASSWORD:-}
+      Cors__AllowedOrigins__0: https://${DOMAIN:-localhost}
+    volumes: [uploads:/data/uploads]
+
+  web:
+    build:
+      context: .
+      dockerfile: src/frontend/industryapp-web/Dockerfile
+    image: industryapp-web
+    restart: unless-stopped
+    depends_on: [api]
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+    ports: ["80:80", "443:443", "443:443/udp"]
+    volumes: [caddy_data:/data]
+
 volumes:
   pgdata:
+  uploads:
+  caddy_data:

@@ -4,11 +4,15 @@ using IndustryApp.Application.Reports.Contracts;
 namespace IndustryApp.Application.Reports;
 
 /// <summary>
-/// Müşterinin rapor işlemleri. Bu fazda UC-04 için detay, tamamlama ve iptal vardır (FR-04.5);
-/// rapor oluşturma ve listeleme (UC-02) Faz 3'te bu arayüze eklenir.
+/// Müşterinin rapor işlemleri: oluşturma ve listeleme (UC-02, endpoint 16–17), detay, tamamlama ve iptal
+/// (UC-04, endpoint 18–20).
 /// </summary>
 public interface IReportService
 {
+    Task<Result<CreateReportResponse>> CreateAsync(ICreateReportRequest request, CancellationToken ct);
+
+    Task<Result<PagedResult<ReportListItemResponse>>> ListMineAsync(IPagedQuery query, CancellationToken ct);
+
     Task<Result<ReportDetailResponse>> GetForCustomerAsync(Guid reportId, CancellationToken ct);
 
     Task<Result> CompleteAsync(Guid reportId, CancellationToken ct);

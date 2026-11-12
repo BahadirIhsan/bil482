@@ -1,0 +1,8 @@
+# Web imajının context'i IndustryApp/; yalnızca frontend kaynakları ve deploy/Caddyfile gerekir.
+.git
+.env
+**/node_modules/
+**/dist/
+src/backend/
+database/
+docs/

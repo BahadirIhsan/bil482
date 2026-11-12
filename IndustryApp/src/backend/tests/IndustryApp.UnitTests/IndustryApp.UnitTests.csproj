@@ -25,6 +25,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\IndustryApp.Domain\IndustryApp.Domain.csproj" />
     <ProjectReference Include="..\..\IndustryApp.Application\IndustryApp.Application.csproj" />
+    <!-- UC-02 adaptörleri (LocalFileStorage, görsel hattı) veritabanısız birim testlerle doğrulanır. -->
+    <ProjectReference Include="..\..\IndustryApp.Infrastructure\IndustryApp.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
